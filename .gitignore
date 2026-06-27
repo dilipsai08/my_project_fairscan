@@ -17,3 +17,4 @@ dist-ssr/
 Thumbs.db
 db.sql
 *md
+!README.md
