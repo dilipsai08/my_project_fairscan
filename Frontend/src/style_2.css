@@ -1,0 +1,297 @@
+@import "./style.css";
+
+@layer components {
+
+  /* Search Page */
+  .srch-card {
+    @apply w-full max-w-2xl bg-surface-container-lowest rounded-lg border border-surface-variant p-8 md:p-10 flex flex-col gap-6;
+    box-shadow: 0 4px 20px rgba(46, 0, 82, 0.04);
+  }
+
+  .srch-field {
+    @apply flex flex-col gap-2 w-full relative;
+  }
+
+  .srch-label {
+    @apply block text-on-surface-variant ml-1 font-inter text-[12px] font-semibold tracking-[0.08em] uppercase;
+  }
+
+  .srch-input-box {
+    @apply w-full bg-surface-container-lowest rounded border border-surface-variant flex items-center px-4 py-3 transition-all;
+  }
+
+  .srch-input-box:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(46, 0, 82, 0.1);
+  }
+
+  .srch-input {
+    @apply w-full bg-transparent border-none outline-none text-on-surface font-jakarta text-[16px];
+  }
+
+  .srch-input::placeholder {
+    color: var(--color-outline);
+  }
+
+  .srch-dropdown {
+    @apply absolute top-full left-0 w-full bg-surface-container-lowest shadow-lg rounded border border-surface-variant z-50 max-h-56 overflow-y-auto mt-1;
+  }
+
+  .srch-dropdown-item {
+    @apply px-4 py-3 cursor-pointer font-jakarta text-[16px] text-on-surface;
+  }
+
+  .srch-dropdown-item:hover {
+    background-color: rgba(240, 219, 255, 0.2);
+  }
+
+  .srch-dropdown-item:not(:last-child) {
+    border-bottom: 1px solid rgba(225, 227, 228, 0.5);
+  }
+
+  .srch-submit {
+    @apply w-full py-4 font-bold rounded shadow-sm cursor-pointer font-inter text-[14px] uppercase tracking-[0.08em] transition-all;
+    background-color: #D4AF37;
+    color: var(--color-primary);
+  }
+
+  .srch-submit:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+
+  .srch-submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .srch-results {
+    @apply w-full max-w-2xl mt-10 bg-surface-container-lowest rounded-lg border p-8 flex flex-col items-center text-center;
+    border-color: rgba(46, 0, 82, 0.15);
+    box-shadow: 0 4px 20px rgba(46, 0, 82, 0.04);
+  }
+
+  .srch-price {
+    @apply font-playfair font-bold text-[48px] leading-none mt-4 mb-3;
+    color: #D4AF37;
+  }
+
+  .srch-check-icon {
+    @apply w-5 h-5 mr-1 shrink-0;
+    color: #D4AF37;
+  }
+
+  .srch-hint {
+    @apply text-[13px] text-on-surface-variant text-center mt-1 font-jakarta;
+  }
+
+  .srch-tab-container {
+    @apply flex border-b border-surface-variant/40 mb-6 w-full;
+  }
+
+  .srch-tab-btn {
+    @apply flex-1 pb-3 font-bold transition-all border-b-2 text-center cursor-pointer;
+    border-color: transparent;
+    color: rgba(76, 68, 81, 0.6);
+  }
+
+  .srch-tab-btn:hover {
+    color: var(--color-primary);
+  }
+
+  .srch-tab-btn--standard-active {
+    border-color: var(--color-primary);
+    color: var(--color-primary) !important;
+  }
+
+  .srch-tab-btn--premium-active {
+    border-color: #D4AF37;
+    color: var(--color-primary) !important;
+  }
+
+  .srch-currency-symbol {
+    @apply text-primary/40 font-bold mr-2;
+  }
+
+  .srch-error-msg {
+    @apply text-error text-center text-body-sm mt-3;
+  }
+
+  .srch-results-title {
+    @apply text-headline-sm text-primary font-playfair mb-1;
+  }
+
+  .srch-results-desc {
+    @apply text-body-sm text-on-surface-variant max-w-md;
+  }
+
+  /* ── AuthHome: Did You Know Section ── */
+  .authhome-tip-featured {
+    @apply relative overflow-hidden rounded-3xl bg-surface-container-lowest border border-surface-variant p-10 md:p-14 mb-5 shadow-sm transition-all min-h-[220px] md:min-h-[240px] flex flex-col justify-between;
+  }
+
+  .authhome-tip-featured:hover {
+    @apply shadow-md;
+    border-color: rgba(212, 175, 55, 0.4);
+  }
+
+  .authhome-tip-arrow {
+    @apply absolute top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:bg-[#D4AF37] hover:text-on-primary transition-all opacity-0 group-hover:opacity-100 shadow-sm cursor-pointer z-10;
+  }
+
+  .authhome-tip-arrow--left {
+    @apply left-3;
+  }
+
+  .authhome-tip-arrow--right {
+    @apply right-3;
+  }
+
+  .authhome-tip-dot {
+    @apply h-2 rounded-full transition-all duration-300 cursor-pointer;
+  }
+
+  .authhome-tip-dot--active {
+    @apply w-6;
+    background-color: #D4AF37;
+  }
+
+  .authhome-tip-dot--inactive {
+    @apply w-2 bg-surface-variant;
+  }
+
+  .authhome-tip-dot--inactive:hover {
+    background-color: rgba(46, 0, 82, 0.3);
+  }
+
+  .authhome-tip-mini {
+    @apply flex items-center gap-3 p-4 rounded-xl bg-surface-container-lowest border border-surface-variant cursor-pointer transition-all;
+  }
+
+  .authhome-tip-mini:hover {
+    @apply shadow-sm;
+    border-color: rgba(212, 175, 55, 0.4);
+  }
+
+  /* ── AuthHome: How It Works Section ── */
+  .authhome-hiw-card {
+    @apply relative flex flex-col items-center text-center p-8 bg-surface-container-lowest rounded-2xl border border-surface-variant transition-all;
+  }
+
+  .authhome-hiw-card:hover {
+    @apply shadow-md;
+    border-color: rgba(212, 175, 55, 0.4);
+  }
+
+  .authhome-hiw-cta {
+    @apply px-8 py-3.5 bg-primary text-on-primary font-semibold rounded-xl transition-colors cursor-pointer shadow-sm;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .authhome-hiw-cta:hover {
+    @apply bg-primary-container;
+  }
+
+  /* ── Queue Page ── */
+  .queue-card {
+    @apply w-full max-w-lg bg-surface-container-lowest rounded-2xl border border-surface-variant p-8 md:p-10 flex flex-col items-center gap-6;
+    box-shadow: 0 4px 24px rgba(46, 0, 82, 0.06);
+  }
+
+  .queue-position-badge {
+    @apply flex flex-col items-center gap-1 py-5 px-10 rounded-2xl bg-primary-fixed border border-primary-fixed-dim;
+  }
+
+  .queue-position-number {
+    @apply font-playfair font-bold text-[56px] leading-none;
+    color: #D4AF37;
+  }
+
+  .queue-position-label {
+    @apply text-primary mt-1;
+    font-family: var(--font-inter);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .queue-progress-track {
+    @apply w-full h-2 rounded-full bg-surface-variant overflow-hidden;
+  }
+
+  .queue-progress-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out;
+    background: linear-gradient(90deg, var(--color-primary), #D4AF37);
+  }
+
+  .queue-status-text {
+    @apply text-on-surface-variant text-center font-jakarta;
+    font-family: var(--font-jakarta);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .queue-step-list {
+    @apply flex items-center justify-center gap-0 w-full;
+  }
+
+  .queue-step-item {
+    @apply flex flex-col items-center gap-2 flex-1;
+  }
+
+  .queue-step-dot {
+    @apply w-3 h-3 rounded-full bg-surface-variant transition-all duration-300;
+  }
+
+  .queue-step-dot--active {
+    background-color: #D4AF37;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+    animation: queue-pulse 1.5s ease-in-out infinite;
+  }
+
+  .queue-step-dot--done {
+    background-color: var(--color-primary);
+  }
+
+  .queue-step-label {
+    @apply text-[11px] font-inter font-semibold tracking-[0.06em] uppercase text-outline text-center;
+  }
+
+  .queue-info-row {
+    @apply flex justify-between w-full py-3 border-b border-surface-variant last:border-0;
+  }
+
+  .queue-eta-box {
+    @apply flex flex-col items-center py-4 px-8 rounded-xl bg-surface-container border border-surface-variant;
+  }
+
+  .queue-eta-value {
+    @apply font-playfair font-bold text-[28px] text-primary leading-none;
+  }
+
+  .queue-eta-label {
+    @apply text-outline mt-2;
+    font-family: var(--font-inter);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @keyframes queue-pulse {
+
+    0%,
+    100% {
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+    }
+
+    50% {
+      box-shadow: 0 0 0 8px rgba(212, 175, 55, 0.1);
+    }
+  }
+}
