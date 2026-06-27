@@ -14,7 +14,6 @@ function AiChat() {
     const location = useLocation();
     const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
-    // Pick up result when redirected back from Queue page
     useEffect(() => {
         if (location.state?.result) {
             setAiResponse(location.state.result.response || location.state.result);
@@ -39,7 +38,6 @@ function AiChat() {
                 headers: { "Content-Type": "multipart/form-data" }
             });
 
-            // Server now returns { requestId, position } instead of AI response
             if (res.data.queued) {
                 navigate("/queue", {
                     state: {
@@ -50,7 +48,6 @@ function AiChat() {
                     }
                 });
             } else {
-                // fallback for direct response (backwards compat)
                 setAiResponse(res.data.response || res.data);
             }
         } catch (error) {
