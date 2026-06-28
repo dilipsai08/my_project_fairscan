@@ -1,11 +1,1 @@
-import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  root: './Frontend',
-  plugins: [
-    tailwindcss(),
-    react(),
-  ],
-})
+// This file has been moved to Frontend/vite.config.js
