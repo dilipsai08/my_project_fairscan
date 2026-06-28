@@ -2,15 +2,18 @@ import { Queue, Worker, QueueEvents } from "bullmq";
 import axios from "axios";
 import logger from "../utils/logger.js";
 
+export const enable_queue = process.env.NODE_ENV !== "development";
+
 const redis_Connection= {
     host: process.env.REDIS_HOST || "localhost",
     port: process.env.REDIS_PORT || 6379,
     password:process.env.REDIS_PASSWORD||"",
     maxRetriesPerRequest: null,
     enableReadyCheck: true,
+    tls: process.env.REDIS_HOST && process.env.REDIS_HOST !== "localhost" ? {} : undefined,
 };
 
-export const Ai_queue= new Queue("Ai_query",{ connection: redis_Connection });
+export const Ai_queue = enable_queue ? new Queue("Ai_query", { connection: redis_Connection }) : null;
 const SSE_client=new Map();
 
 export function register_SSE_client(clientId,res){
@@ -35,6 +38,9 @@ function send_SSE(clientId,event,data){
 }
 
 export async function get_position(clientId) {
+    if (!Ai_queue) {
+        return null;
+    }
     try {
         const jobs= await Ai_queue.getJobs(["wait"],0,100);
         const index=jobs.findIndex((job)=>job.data.clientId===clientId);
@@ -60,9 +66,7 @@ async function broadcast() {
     }
 }
 
-const worker = new Worker("Ai_query",async(job)=>{
-    logger.info(`job ${job.id} is active`);
-    const {base64Image,mimetype,query}=job.data;
+export async function processAiJobData({ base64Image, mimetype, query }) {
     const final_prompt = `
             Analyse the attached prescription image.
             User Query: ${query}
@@ -104,8 +108,7 @@ const worker = new Worker("Ai_query",async(job)=>{
         };
 
         const models = [
-            "nvidia/llama-nemotron-rerank-vl-1b-v2:free",
-            "nvidia/llama-nemotron-embed-vl-1b-v2:free"
+            "nvidia/nemotron-nano-12b-v2-vl:free"
         ];
 
         let response_txt = "";
@@ -140,48 +143,56 @@ const worker = new Worker("Ai_query",async(job)=>{
         }
 
         return { response: response_txt };
-   
-},{
-    connection:redis_Connection,
-    removeOnComplete: 100,
-    removeOnFail: 100,
-    concurrency:1,
-    limiter:{
-        max:2,
-        duration:60000
-    }
-});
+}
 
-const events = new QueueEvents("Ai_query", { connection: redis_Connection });
+if (enable_queue) {
+    const worker = new Worker("Ai_query", async (job) => {
+        logger.info(`job ${job.id} is active`);
+        return processAiJobData(job.data);
+    }, {
+        connection: redis_Connection,
+        removeOnComplete: 100,
+        removeOnFail: 100,
+        concurrency: 1,
+        limiter: {
+            max: 2,
+            duration: 60000
+        }
+    });
 
-events.on("active", async ({ jobId }) => {
-    logger.info(`job ${jobId} is active`);
-    const job = await Ai_queue.getJob(jobId);
-    if (job) send_SSE(job.data.clientId, "processing", {});
-    await broadcast();
-});
+    const events = new QueueEvents("Ai_query", { connection: redis_Connection });
 
-events.on("completed", async ({ jobId, returnvalue }) => {
-    logger.info(`job ${jobId} is completed`);
-    const job = await Ai_queue.getJob(jobId);
-    const data = typeof returnvalue === "string" ? JSON.parse(returnvalue) : returnvalue;
-    if (job) {
-        send_SSE(job.data.clientId, "completed", data);
-        SSE_client.delete(job.data.clientId);
-    }
-});
+    events.on("active", async ({ jobId }) => {
+        logger.info(`job ${jobId} is active`);
+        const job = await Ai_queue.getJob(jobId);
+        if (job) send_SSE(job.data.clientId, "processing", {});
+        await broadcast();
+    });
 
-events.on("failed", async ({ jobId, failedReason }) => {
-    logger.error(`job ${jobId} failed: ${failedReason}`);
-    const job = await Ai_queue.getJob(jobId);
-    if (job) {
-        send_SSE(job.data.clientId, "failed", { message: "AI processing failed. Please try again." });
-        SSE_client.delete(job.data.clientId);
-    }
-});
+    events.on("completed", async ({ jobId, returnvalue }) => {
+        logger.info(`job ${jobId} is completed`);
+        const job = await Ai_queue.getJob(jobId);
+        const data = typeof returnvalue === "string" ? JSON.parse(returnvalue) : returnvalue;
+        if (job) {
+            send_SSE(job.data.clientId, "completed", data);
+            SSE_client.delete(job.data.clientId);
+        }
+    });
 
-worker.on("error", (err) => {
-    logger.error("Worker error: ", err.message);
-});
+    events.on("failed", async ({ jobId, failedReason }) => {
+        logger.error(`job ${jobId} failed: ${failedReason}`);
+        const job = await Ai_queue.getJob(jobId);
+        if (job) {
+            send_SSE(job.data.clientId, "failed", { message: "AI processing failed. Please try again." });
+            SSE_client.delete(job.data.clientId);
+        }
+    });
 
-logger.info("[BullMQ] AI prescription queue initialized");
+    worker.on("error", (err) => {
+        logger.error("Worker error: ", err.message);
+    });
+
+    logger.info("AI prescription queue initialized(bullmq)");
+} else {
+    logger.info("skipped in development; AI requests will run directly (bullmq)");
+}

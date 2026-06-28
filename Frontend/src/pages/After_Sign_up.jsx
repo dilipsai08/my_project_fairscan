@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { Deco } from '../components/jsx_deco_.js';
+import { bloodGroups } from '../components/blood_groups.js';
 
 function After_Sign_up() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const onboardingToken = searchParams.get('token');
-    const [form, setForm] = useState({ username: '', location: '', pincode: '', password: '', confirmPassword: '', bloodGroup: '' });
+    const [form, setForm] = useState({ username: '', address: '', pincode: '', password: '', confirmPassword: '', bloodGroup: '' });
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const blood_grps = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-    const filtered = blood_grps.filter(b => b.toLowerCase().includes(search.toLowerCase()));
+    const filtered = bloodGroups.filter(b => b.toLowerCase().includes(search.toLowerCase())).slice(0, 12);
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
+    useEffect(() => {
+        if (!onboardingToken) {
+            setError("Your sign-up session is missing. Please start sign-up again.");
+        }
+    }, [onboardingToken]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,19 +30,20 @@ function After_Sign_up() {
         setLoading(true);
         setError("");
         if (!onboardingToken) {
-            navigate('/sign-up');
+            setError("Your sign-up session is missing. Please start sign-up again.");
+            setLoading(false);
             return;
         }
         try {
-            const data = await axios.post('/api/auth/complete-profile', { onboardingToken, ...form });
+            const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+            const data = await axios.post(`${backendUrl}/auth/complete-profile`, { onboardingToken, ...form });
             if(data.status===200){
                 navigate("/home");
             }else{
-                navigate("/complete-profile");
+                navigate("/after-sign-up");
             }
-        } catch {
-            console.error("something went wrong");
-            navigate('/sign-up');
+        } catch (err) {
+            setError(err.response?.data?.message || "Could not complete profile. Please try again.");
         } finally {
             setLoading(false);
         }

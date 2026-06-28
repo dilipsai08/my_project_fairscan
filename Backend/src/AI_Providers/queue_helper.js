@@ -26,7 +26,7 @@ export async function queue_helper(req, res,next) {
 
     // Send updates to client 
     let handled = false;
-    if (jobId) {
+    if (jobId && Ai_queue) {
         try {
             const job = await Ai_queue.getJob(jobId);
             if (job) {

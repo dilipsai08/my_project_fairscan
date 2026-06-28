@@ -5,3 +5,12 @@ export function get_email(profile) {
 export function get_name(profile) {
     return profile.displayName || profile.name?.givenName || "New Player";
 }
+
+export function isProfileComplete(user) {
+    return Boolean(
+        user?.username &&
+        user?.location &&
+        user?.pincode &&
+        user?.password_hash
+    );
+}

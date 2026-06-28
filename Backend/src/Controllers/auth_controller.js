@@ -1,17 +1,20 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import passport from "../../config/Passport_strategies.js";
-import { findUserByUsername, createUser, findUserByEmail } from "../Models/db_queries.js";
+import { findUserByUsername, createUser, findUserByEmail, completeUserProfileByEmail } from "../Models/db_queries.js";
+import { isValidEmail } from "../Services/valid_user_check.js";
+import { bloodGroups } from "../../../Frontend/src/components/blood_groups.js";
+import logger from "../utils/logger.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "";
+const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_here";
 const saltRounds = 10;
 
 export async function completeProfile(req, res, next) {
     try {
         const { onboardingToken, username, location, pincode, password, bloodGroup } = req.body;
 
-        if (!onboardingToken || !username || !location || !pincode || !password || !bloodGroup) {
-            const error = new Error("All fields are required");
+        if (!onboardingToken || !username || !location || !pincode || !password) {
+            const error = new Error("All fields except blood group are required");
             error.statusCode = 400;
             return next(error);
         }
@@ -26,8 +29,14 @@ export async function completeProfile(req, res, next) {
         }
 
         const { email, name } = decoded;
+        if (!isValidEmail(email)) {
+            const error = new Error("Invalid email format");
+            error.statusCode = 400;
+            return next(error);
+        }
+
         const existingUsername = await findUserByUsername(username);
-        if (existingUsername) {
+        if (existingUsername && existingUsername.email !== email) {
             const error = new Error("Username is already taken");
             error.statusCode = 400;
             return next(error);
@@ -35,15 +44,15 @@ export async function completeProfile(req, res, next) {
 
         const password_hash = await bcrypt.hash(password, saltRounds);
 
-        const newUser = await createUser({
-            email,
-            name,
-            username,
-            password_hash,
-            location,
-            pincode,
-            blood_group: bloodGroup
-        });
+        let trust_score = 48.000;
+        if (bloodGroup && bloodGroups.includes(bloodGroup)) {
+            trust_score = 50.000;
+        }
+
+        const existingUser = await findUserByEmail(email);
+        const newUser = existingUser
+            ? await completeUserProfileByEmail({ email, name, username, password_hash, location, pincode, blood_group: bloodGroup, trust_score })
+            : await createUser({ email, name, username, password_hash, location, pincode, blood_group: bloodGroup, trust_score });
 
         // new token
         const jwtToken = jwt.sign(
@@ -107,7 +116,7 @@ export function oauthCallback(req, res, next) {
                     JWT_SECRET,
                     { expiresIn: "10m" }
                 );
-                return res.redirect(`${frontendURL}/complete-profile?token=${onboardingToken}`);
+                return res.redirect(`${frontendURL}/after-sign-up?token=${onboardingToken}`);
             } else {
                 const err = new Error("some thing went wrong please try again later :)");
                 logger.error(`error occured while oauth callback, if(!user)`);

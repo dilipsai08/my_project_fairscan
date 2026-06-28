@@ -2,7 +2,7 @@ import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
 import { Strategy as AmazonStrategy } from "passport-amazon";
 import { Strategy as GitHubStrategy } from "passport-github2";
-import { get_email, get_name } from "../src/utils/auth_helper.js";
+import { get_email, get_name, isProfileComplete } from "../src/utils/auth_helper.js";
 import { findUserByEmail, findUserById } from "../src/Models/db_queries.js";
 
 passport.use("google", new GoogleStrategy({
@@ -16,7 +16,7 @@ passport.use("google", new GoogleStrategy({
             return done(null, false, { message: "Google did not return an email address." });
         }
         const user = await findUserByEmail(email);
-        if (!user) {
+        if (!isProfileComplete(user)) {
             return done(null, false, {
                 message: "onboarding_required",
                 email: email,
@@ -40,7 +40,7 @@ passport.use("amazon", new AmazonStrategy({
             return done(null, false, { message: "Amazon did not return an email address." });
         }
         const user = await findUserByEmail(email);
-        if (!user) {
+        if (!isProfileComplete(user)) {
             return done(null, false, {
                 message: "onboarding_required",
                 email: email,
@@ -65,7 +65,7 @@ passport.use("github", new GitHubStrategy({
             return done(null, false, { message: "GitHub did not return an email address." });
         }
         const user = await findUserByEmail(email);
-        if (!user) {
+        if (!isProfileComplete(user)) {
             return done(null, false, {
                 message: "onboarding_required",
                 email: email,

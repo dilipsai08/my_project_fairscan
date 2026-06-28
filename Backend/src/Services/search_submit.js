@@ -82,7 +82,9 @@ export async function search_handler (req,res,next){
             const activity_record_text = `Searched for ${test_name} in ${pincode}`;
             await db_query.createUserActivity(user_id, "search", activity_record_text);
         } catch (activityErr) {
-            console.error("Activity logging failed:", activityErr);
+            const err= new Error (" failed to insert user activity (fair search)",activityErr.message);
+            err.status=400;
+            next(err);
         }
 
         if (ans) {

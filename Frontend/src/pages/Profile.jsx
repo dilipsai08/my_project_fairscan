@@ -33,34 +33,66 @@ const Profile = () => {
         fetchData();
     }, []);
 
+    if (loading) {
+        return (
+            <div className={styles.LoadingWrapper}>
+                <div className={styles.LoadingText}>Loading...</div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className={styles.ErrorWrapper}>
+                <h1 className={styles.ErrorTitle}>Profile unavailable</h1>
+                <p className={styles.ErrorDesc}>
+                    We could not load your profile. Please sign in again.
+                </p>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.Wrapper}>
-            {/* hero */}
             <section className={styles.HeaderSection}>
-                <h1 className={styles.HeaderTitle}>{user.name}'s Dashboard</h1>
-                <p className={styles.HeaderSubtitle}>Your Impact Overview</p>
+                <div className={styles.HeaderLeft}>
+                    <h1 className={styles.HeaderTitle}>{user.name}'s Dashboard</h1>
+                    <p className={styles.HeaderSubtitle}>Your Impact Overview</p>
+                </div>
+                <button
+                    onClick={async () => {
+                        try {
+                            await axios.post(`${backendUrl}/api/auth/logout`, {}, { withCredentials: true });
+                            window.location.href = "/sign-in";
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }}
+                    className={styles.LogoutBtn}
+                >
+                    Logout
+                </button>
             </section>
 
             <section className={styles.MainContainer}>
                 <div className={styles.ProfileGrid}>
-                    
-                    {/* Left Column: Personal Info Card */}
+
+                    {/* personal info*/}
                     <div className={styles.InfoCard}>
                         <div className={styles.AvatarWrapper}>
-                            {/* User Avatar SVG */}
-                            <svg className={styles.AvatarIcon} fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                            <svg className={styles.AvatarIcon} fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
                         </div>
                         <h2 className={styles.UserName}>{user.name}</h2>
                         <p className={styles.UserEmail}>{user.email}</p>
-                        
+
                         <span className={styles.Badge}>
-                            <svg className="w-4 h-4 text-[#D4AF37]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                            <svg className="w-4 h-4 text-[#D4AF37]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                             Verified Contributor
                         </span>
 
                         <div className={styles.InfoList}>
                             <div className={styles.InfoRow}>
-                                <span className={styles.InfoLabel}>Location</span>
+                                <span className={styles.InfoLabel}>Address</span>
                                 <span className={styles.InfoValue}>{user.location}</span>
                             </div>
                             <div className={styles.InfoRow}>
@@ -76,10 +108,10 @@ const Profile = () => {
 
                     {/* stats and activity*/}
                     <div className={styles.StatsContainer}>
-                        
+
                         {/* Stats */}
                         <div className={styles.StatsGrid}>
-                            
+
                             {/* 1 total contributions*/}
                             <div className={styles.StatCard}>
                                 <div className={styles.StatHeader}>

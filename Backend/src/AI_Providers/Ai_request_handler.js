@@ -1,6 +1,6 @@
 import multer from "multer";
-import logger from "../utils/logger.js";
-import { Ai_queue, get_position } from "./ai_queue.js";
+import { Ai_queue, get_position, enable_queue, processAiJobData } from "./ai_queue.js";
+import * as db_query from "../Models/db_queries.js";
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -23,23 +23,41 @@ export async function handleAiRequest(req, res, next) {
             return res.status(400).json({ success: false, message: "No image file uploaded." });
         }
 
+        try {
+            const now = new Date();
+            const activity_record_text = `AI query request on ${now.toLocaleDateString()}`;
+            await db_query.createUserActivity(req.user.id, "ai_query", activity_record_text);
+        } catch (activityErr) {
+            console.error("Failed to log user activity (ai_query)", activityErr);
+        }
+
         const base64Image = imageFile.buffer.toString("base64");
-
-        // Generate a clientId for SSE tracking
-        const clientId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-
-        // Add job to BullMQ queue instead of processing inline
-        const job = await Ai_queue.add("ai-job", {
+        const jobData = {
             base64Image,
             mimetype: imageFile.mimetype,
             query: query || "",
-            clientId   // stored in job.data so QueueEvents can send SSE to the right client
+        };
+
+        if (!enable_queue) {
+            const result = await processAiJobData(jobData);
+            return res.status(200).json({
+                success: true,
+                queued: false,
+                response: result.response
+            });
+        }
+
+        // clientId for SSE tracking
+        const clientId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+        // new job to bullmq
+        const job = await Ai_queue.add("ai-job", {
+            ...jobData,
+            clientId   // stored in job_data so queuevents can send SSE
         });
 
-        // Get this job's position in the queue
         const position = await get_position(clientId) || 1;
 
-        // Return immediately — client will connect via SSE to track progress
         return res.status(200).json({
             success: true,
             queued: true,
@@ -49,8 +67,9 @@ export async function handleAiRequest(req, res, next) {
         });
 
     } catch (error) {
-        logger.error("Failed to enqueue AI request", error.response?.data || error.message);
-        next(error);
+        const err = new Error("Failed to enqueue AI request", error.response?.data || error.message);
+        err.status = 400;
+        next(err);
     }
 }
 

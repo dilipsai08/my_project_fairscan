@@ -6,11 +6,11 @@ function Sign_In() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const backend_url = import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+    const backend_url = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
     useEffect(() => {
         async function checkSession() {
             try {
-                const response = await axios.get(`${backend_url}/verify-session`);
+                const response = await axios.get(`${backend_url}/auth/verify-session`);
                 if (response.status === 200) {
                     navigate("/home");
                 }
@@ -24,7 +24,7 @@ function Sign_In() {
     async function handleSubmit(e) {
         e.preventDefault();
         try {
-            const data = await axios.post(`${backend_url}/api/login/submit`, {
+            const data = await axios.post(`${backend_url}/login/submit`, {
                 email: email,
                 password: password
             });
@@ -40,8 +40,10 @@ function Sign_In() {
             navigate("/sign-in");
         }
     }
+
     function handle_Social_login(via) {
-        window.location.href = `${backend_url}/auth/${via.toLowerCase()}`;// re direct to social login pages
+        const base = backend_url.replace(/\/api$/, '');
+        window.location.href = `${base}/auth/${via.toLowerCase()}`;// re direct to social login pages
     }
 
     return (

@@ -7,7 +7,7 @@ function MedicineInfo() {
     const [query, setQuery] = useState("");
     const [info, setInfo] = useState(null);
     const [loading, setLoading] = useState(false);
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
     async function handle_search() {
         if (!query.trim()) {

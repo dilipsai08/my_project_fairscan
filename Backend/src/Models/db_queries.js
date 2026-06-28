@@ -20,14 +20,31 @@ export async function findUserByUsername(username) {
     return result.rows[0] || null;
 }
 
-export async function createUser({ email, name, username, password_hash, location, pincode, blood_group }) {
+export async function createUser({ email, name, username, password_hash, location, pincode, blood_group, trust_score }) {
     const result = await db.query(
-        `INSERT INTO users (email, name, username, password_hash, location, pincode, blood_group) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7) 
+        `INSERT INTO users (email, name, username, password_hash, location, pincode, blood_group, trust_score) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
          RETURNING *`,
-        [email, name, username, password_hash, location, pincode, blood_group]
+        [email, name, username, password_hash, location, pincode, blood_group, trust_score]
     );
     return result.rows[0];
+}
+
+export async function completeUserProfileByEmail({ email, name, username, password_hash, location, pincode, blood_group, trust_score }) {
+    const result = await db.query(
+        `UPDATE users
+         SET name = COALESCE(name, $2),
+             username = $3,
+             password_hash = $4,
+             location = $5,
+             pincode = $6,
+             blood_group = $7,
+             trust_score = $8
+         WHERE email = $1
+         RETURNING *`,
+        [email, name, username, password_hash, location, pincode, blood_group, trust_score]
+    );
+    return result.rows[0] || null;
 }
 
 export async function getHealthTips() {
