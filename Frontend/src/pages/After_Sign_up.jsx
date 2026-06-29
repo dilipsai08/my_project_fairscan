@@ -13,7 +13,7 @@ function After_Sign_up() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const filtered = bloodGroups.filter(b => b.toLowerCase().includes(search.toLowerCase())).slice(0, 12);
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
     useEffect(() => {
         if (!onboardingToken) {
@@ -35,8 +35,8 @@ function After_Sign_up() {
             return;
         }
         try {
-            const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
-            const data = await axios.post(`${backendUrl}/auth/complete-profile`, { onboardingToken, ...form });
+            const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+            const data = await axios.post(`${backendUrl}/api/auth/complete-profile`, { onboardingToken, ...form });
             if(data.status===200){
                 navigate("/home");
             }else{

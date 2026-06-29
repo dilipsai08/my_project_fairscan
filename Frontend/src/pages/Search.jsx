@@ -8,7 +8,7 @@ import Premium_hospitals from "../components/Premium_hospitals";
 import "../style_2.css";
 
 const D = Deco.SearchPage;
-const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 function Search() {
     const navigate = useNavigate();
@@ -50,7 +50,7 @@ function Search() {
         setLoading(true); setError("");
         const loc = getLocation();
         try {
-            const res = await axios.post(`${backendUrl}/search-test`, {
+            const res = await axios.post(`${backendUrl}/api/search-test`, {
                 testName,
                 userProvidedPrice: parseFloat(price),
                 hospitalTier: mode_tab === "premium" ? "Premium" : "Standard",

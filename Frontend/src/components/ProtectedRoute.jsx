@@ -5,12 +5,12 @@ import axios from 'axios';
 export const ProtectedRoute = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const location = useLocation();
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get(`${backendUrl}/auth/verify-session`, {
+                const response = await axios.get(`${backendUrl}/api/auth/verify-session`, {
                     withCredentials: true
                 });
                 if (response.data.loggedIn) {

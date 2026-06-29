@@ -22,8 +22,6 @@ const app = express();
 const port = process.env.PORT || 3000;
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
 
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -33,7 +31,7 @@ app.use(cors({
     credentials: true,
 }));
 
-// Apply global ban check
+// global ban check
 app.use(ban_check);
 
 app.use(session({
@@ -55,9 +53,7 @@ app.post('/api/auth/complete-profile', authController.completeProfile);
 app.get('/api/auth/verify-session', isAuthenticated, (req, res) => {
     return res.status(200).json({ loggedIn: true, user: req.user });
 });
-app.get('/verify-session', isAuthenticated, (req, res) => {
-    return res.status(200).json({ loggedIn: true, user: req.user });
-});
+
 
 // Login submit endpoint
 app.post('/api/login/submit', authController.loginSubmit);
@@ -71,7 +67,7 @@ app.get('/api/user/info', isAuthenticated, (req, res) => {
 app.get('/api/user/profile', isAuthenticated, getProfile);
 app.get('/api/user/activity', isAuthenticated, getActivity);
 
-// TODO: Populate health_tips database table later. Returns empty array if table doesn't exist.
+// get health tips
 app.get('/api/health-tips', health_tips);
 
 // 4. Logout Endpoint
@@ -80,14 +76,16 @@ app.post('/api/auth/logout', (req, res) => {
     return res.status(200).json({ success: true, message: 'Logged out successfully' });
 });
 
+// search test
 app.post('/api/search-test', isAuthenticated, Search_rate_limit, search_handler);
 
+// medicine info
 app.get('/api/medicine/info', isAuthenticated, Search_rate_limit, medi_info_handler);
 
-// 5. AI query
+// AI query
 app.post('/api/ai-chat-submit', upload.single('prescription'), ai_rate_limit, handleAiRequest);
 
-// 6. SSE 
+// SSE 
 app.get('/api/queue/status', queue_helper);
 
 // global error handler

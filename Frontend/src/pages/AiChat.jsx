@@ -12,7 +12,7 @@ function AiChat() {
     const cameraInputRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
     useEffect(() => {
         if (location.state?.result) {
@@ -33,7 +33,7 @@ function AiChat() {
         formData.append("prescription", imageFile);
         formData.append("query", query);
         try {
-            const res = await axios.post(`${backendUrl}/ai-chat-submit`, formData, {
+            const res = await axios.post(`${backendUrl}/api/ai-chat-submit`, formData, {
                 withCredentials: true,
                 headers: { "Content-Type": "multipart/form-data" }
             });

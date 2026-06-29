@@ -9,8 +9,7 @@ function Sign_up() {
     const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
     const handleSocial = (provider) => {
-        const base = backendUrl.replace(/\/api$/, '');
-        window.location.href = `${base}/auth/${provider.toLowerCase()}`;
+        window.location.href = `${backendUrl}/auth/${provider.toLowerCase()}`;
     };
 
     return (

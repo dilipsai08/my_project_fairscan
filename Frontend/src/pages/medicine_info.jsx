@@ -7,7 +7,7 @@ function MedicineInfo() {
     const [query, setQuery] = useState("");
     const [info, setInfo] = useState(null);
     const [loading, setLoading] = useState(false);
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
     async function handle_search() {
         if (!query.trim()) {
@@ -17,7 +17,7 @@ function MedicineInfo() {
         setLoading(true);
         setInfo(null);
         try {
-            const response = await axios.get(`${backendUrl}/medicine/info`, { 
+            const response = await axios.get(`${backendUrl}/api/medicine/info`, { 
                 params: { q: query },
                 withCredentials: true 
             });

@@ -4,7 +4,7 @@ import { Deco } from "../components/jsx_deco_";
 import "../style_2.css";
 
 const Q = Deco.QueuePage;
-const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 const STEPS = ["Submitted", "In Queue", "Processing", "Complete"];
 
@@ -24,7 +24,7 @@ function Queue() {
     useEffect(() => {
         if (!state?.requestId) { navigate("/search"); return; }
 
-        const url = `${backendUrl}/queue/status?requestId=${state.requestId}${state.jobId ? `&jobId=${state.jobId}` : ''}`;
+        const url = `${backendUrl}/api/queue/status?requestId=${state.requestId}${state.jobId ? `&jobId=${state.jobId}` : ''}`;
         const es = new EventSource(url, { withCredentials: true });
         esRef.current = es;
 
@@ -111,7 +111,7 @@ function Queue() {
                         </div>
                     )}
 
-                    {/* ETA */}
+                    {/* Wait timer */}
                     {eta !== "--" && (
                         <div className={Q.EtaBox}>
                             <span className={Q.EtaValue}>{eta}</span>
