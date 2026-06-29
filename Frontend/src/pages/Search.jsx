@@ -8,7 +8,7 @@ import Premium_hospitals from "../components/Premium_hospitals";
 import "../style_2.css";
 
 const D = Deco.SearchPage;
-const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const backendUrl = "";
 
 function Search() {
     const navigate = useNavigate();

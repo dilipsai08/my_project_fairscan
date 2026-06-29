@@ -5,7 +5,7 @@ import axios from 'axios';
 export const ProtectedRoute = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const location = useLocation();
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    const backendUrl = "";
 
     useEffect(() => {
         const checkAuth = async () => {

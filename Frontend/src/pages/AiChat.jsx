@@ -12,7 +12,7 @@ function AiChat() {
     const cameraInputRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    const backendUrl = "";
 
     useEffect(() => {
         if (location.state?.result) {

@@ -4,7 +4,7 @@ import { Deco } from "../components/jsx_deco_";
 import "../style_2.css";
 
 const Q = Deco.QueuePage;
-const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const backendUrl = "";
 
 const STEPS = ["Submitted", "In Queue", "Processing", "Complete"];
 

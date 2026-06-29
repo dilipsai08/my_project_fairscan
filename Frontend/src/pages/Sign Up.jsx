@@ -6,7 +6,7 @@ const customstyle= " bg-surface-container-high! text-on-surface! border border-s
 function Sign_up() {
     const navigate = useNavigate();
     const D = Deco.SignInPage;
-    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    const backendUrl = "";
 
     const handleSocial = (provider) => {
         window.location.href = `${backendUrl}/auth/${provider.toLowerCase()}`;

@@ -6,7 +6,7 @@ function Sign_In() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const backend_url = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    const backend_url = "";
     useEffect(() => {
         async function checkSession() {
             try {

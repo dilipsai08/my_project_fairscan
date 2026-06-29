@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Deco } from '../components/jsx_deco_';
 
-const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const backendUrl = "";
 
 const Profile = () => {
     const styles = Deco.Profile;

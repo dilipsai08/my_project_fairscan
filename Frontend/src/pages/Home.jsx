@@ -5,7 +5,7 @@ import { Deco } from "../components/jsx_deco_";
 import { saveLocation, getLocation } from "../components/locationStore";
 
 const D = Deco.AuthHome;
-const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const backendUrl = "";
 
 // default tips
 const health_tips = [
