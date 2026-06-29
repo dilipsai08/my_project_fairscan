@@ -4,6 +4,9 @@
   "private": true,
   "description": "Root package for Fairscan",
   "scripts": {
-    "install-all": "cd Frontend && npm install && cd ../Backend && npm install"
+    "install-all": "cd Frontend && npm install && cd ../Backend && npm install",
+    "postinstall": "npm run install-all",
+    "build": "cd Frontend && npm run build",
+    "start": "cd Backend && npm start"
   }
 }
