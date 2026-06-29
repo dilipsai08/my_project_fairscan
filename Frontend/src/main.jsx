@@ -22,6 +22,7 @@ import Pub_Home from './pages/Pub_Home.jsx'
 import PrivacyPolicy from './pages/Privacy Policy.jsx'
 import TermsAndConditions from './pages/Terms & Conditions.jsx'
 import { ProtectedRoute } from './components/ProtectedRoute.jsx'
+import OAuth_Success from './pages/OAuth_Success.jsx'
 
 axios.defaults.withCredentials = true;
 
@@ -53,6 +54,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/sign-in" element={<Sign_In />} />
         <Route path="/sign-up" element={<Sign_up />} />
         <Route path="/after-sign-up" element={<After_Sign_up />} />
+        <Route path="/oauth-success" element={<OAuth_Success />} />
       </Routes>
       <Footer />
     </BrowserRouter>

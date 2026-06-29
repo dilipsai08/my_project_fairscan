@@ -13,7 +13,7 @@ function After_Sign_up() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const filtered = bloodGroups.filter(b => b.toLowerCase().includes(search.toLowerCase())).slice(0, 12);
-    const backendUrl = "";
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
     useEffect(() => {
         if (!onboardingToken) {
@@ -35,11 +35,11 @@ function After_Sign_up() {
             return;
         }
         try {
-            const backendUrl = "";
+            const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
             const data = await axios.post(`${backendUrl}/api/auth/complete-profile`, { onboardingToken, ...form });
-            if(data.status===200){
+            if (data.status === 200) {
                 navigate("/home");
-            }else{
+            } else {
                 navigate("/after-sign-up");
             }
         } catch (err) {
@@ -63,13 +63,13 @@ function After_Sign_up() {
                         <div key={field} className={D.Field}>
                             <label className={D.Label}>{field.replace(/([A-Z])/g, ' $1')}</label>
                             <div className={D.InputBox}>
-                                <input 
+                                <input
                                     type={field.toLowerCase().includes('password') ? 'password' : 'text'}
-                                    className={D.Input} 
-                                    placeholder={`Enter your ${field}`} 
-                                    value={form[field]} 
-                                    onChange={e => setForm({ ...form, [field]: e.target.value })} 
-                                    required 
+                                    className={D.Input}
+                                    placeholder={`Enter your ${field}`}
+                                    value={form[field]}
+                                    onChange={e => setForm({ ...form, [field]: e.target.value })}
+                                    required
                                 />
                             </div>
                         </div>
@@ -77,24 +77,23 @@ function After_Sign_up() {
                     <div className={D.Field}>
                         <label className={D.Label}>Blood Group</label>
                         <div className={D.InputBox}>
-                            <input 
-                                className={D.Input} 
-                                placeholder="Search Blood Group..." 
-                                value={search} 
-                                onChange={e => setSearch(e.target.value)} 
+                            <input
+                                className={D.Input}
+                                placeholder="Search Blood Group..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
                             />
                         </div>
                         <div className="grid grid-cols-4 gap-2 mt-2">
                             {filtered.map(bg => (
-                                <button 
-                                    key={bg} 
-                                    type="button" 
-                                    onClick={() => { setForm({ ...form, bloodGroup: bg }); setSearch(bg); }} 
-                                    className={`py-2 text-xs font-bold rounded border cursor-pointer ${
-                                        form.bloodGroup === bg 
-                                        ? 'bg-primary text-white border-primary' 
-                                        : 'bg-white text-gray-700 border-surface-variant hover:border-primary'
-                                    }`}
+                                <button
+                                    key={bg}
+                                    type="button"
+                                    onClick={() => { setForm({ ...form, bloodGroup: bg }); setSearch(bg); }}
+                                    className={`py-2 text-xs font-bold rounded border cursor-pointer ${form.bloodGroup === bg
+                                            ? 'bg-primary text-white border-primary'
+                                            : 'bg-white text-gray-700 border-surface-variant hover:border-primary'
+                                        }`}
                                 >
                                     {bg}
                                 </button>

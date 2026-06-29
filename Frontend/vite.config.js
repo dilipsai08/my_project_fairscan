@@ -7,18 +7,4 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://my-project-fairscan.onrender.com',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/auth': {
-        target: 'https://my-project-fairscan.onrender.com',
-        changeOrigin: true,
-        secure: false,
-      }
-    }
-  }
 })

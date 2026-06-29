@@ -1,14 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://my-project-fairscan.onrender.com/api/$1"
-    },
-    {
-      "source": "/auth/(.*)",
-      "destination": "https://my-project-fairscan.onrender.com/auth/$1"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
