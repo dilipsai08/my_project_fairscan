@@ -8,6 +8,7 @@ import logger from "../utils/logger.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_here";
 const saltRounds = 10;
+const isProduction = process.env.NODE_ENV !== "development";
 
 export async function completeProfile(req, res, next) {
     try {
@@ -63,8 +64,8 @@ export async function completeProfile(req, res, next) {
 
         res.cookie("token", jwtToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         });
 
@@ -132,8 +133,8 @@ export function oauthCallback(req, res, next) {
         );
         res.cookie("token", jwtToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         });
         return res.redirect(`${frontendURL}/home`);
@@ -173,8 +174,8 @@ export async function loginSubmit(req, res, next) {
 
         res.cookie("token", jwtToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         });
 
