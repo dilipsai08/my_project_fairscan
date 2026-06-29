@@ -90,14 +90,6 @@ app.post('/api/ai-chat-submit', upload.single('prescription'), ai_rate_limit, ha
 // SSE 
 app.get('/api/queue/status', queue_helper);
 
-// for deployment use only 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, '../Frontend/dist')));
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../Frontend/dist/index.html'));
-});
-
 // global error handler
 app.use(errorHandler);
 
