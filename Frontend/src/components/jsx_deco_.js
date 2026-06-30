@@ -302,5 +302,10 @@ export const Deco = {
         FooterContainer: "mt-2 text-center",
         FooterText: "text-[16px] text-on-surface-variant",
         FooterLink: "text-[16px] font-semibold text-primary hover:text-[#D4AF37] transition-colors"
+    },
+    OAuthCallback: {
+        Wrapper: "oauth-wrapper",
+        Text: "oauth-text",
+        ErrorText: "oauth-error-text"
     }
 };

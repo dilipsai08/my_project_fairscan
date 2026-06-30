@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Deco } from "../components/jsx_deco_";
 
 function Pub_Home() {
   const navigate = useNavigate();
+  const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const response = await axios.get(`${backendUrl}/api/auth/verify-session`, { withCredentials: true });
+        if (response.status === 200) {
+          navigate("/home", { replace: true });
+        }
+      } catch (error) {
+        // not logged in, stay on public home
+      }
+    }
+    checkSession();
+  }, [navigate, backendUrl]);
   return (
     <div>
       {/* hero section */}

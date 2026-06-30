@@ -124,7 +124,7 @@
     @apply text-body-sm text-on-surface-variant max-w-md;
   }
 
-  /* ── AuthHome: Did You Know Section ── */
+  /* ── AuthHome: Health tips Section ── */
   .authhome-tip-featured {
     @apply relative overflow-hidden rounded-3xl bg-surface-container-lowest border border-surface-variant p-10 md:p-14 mb-5 shadow-sm transition-all min-h-[220px] md:min-h-[240px] flex flex-col justify-between;
   }
@@ -293,5 +293,18 @@
     50% {
       box-shadow: 0 0 0 8px rgba(212, 175, 55, 0.1);
     }
+  }
+
+  /* OAuthCallback Page */
+  .oauth-wrapper {
+    @apply flex h-screen w-full items-center justify-center bg-background;
+  }
+
+  .oauth-text {
+    @apply text-primary font-inter font-semibold tracking-[0.08em] uppercase;
+  }
+
+  .oauth-error-text {
+    @apply text-error font-inter font-semibold tracking-[0.08em] uppercase;
   }
 }
