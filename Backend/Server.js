@@ -19,8 +19,10 @@ import { search_handler } from './src/Services/search_submit.js';
 import { getUserActivities } from './src/Models/db_queries.js';
 import { medi_info_handler } from './src/Services/medicine_info_handler.js';
 import { getProfile, getActivity } from './src/Services/profile_service.js';
+import { GetLocation } from './src/Services/location_service.js';
 
 const app = express();
+app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
 
@@ -83,6 +85,9 @@ app.post('/api/search-test', isAuthenticated, Search_rate_limit, search_handler)
 
 // medicine info
 app.get('/api/medicine/info', isAuthenticated, Search_rate_limit, medi_info_handler);
+
+// location 
+app.get('/api/get-location', isAuthenticated, GetLocation);
 
 // AI query
 app.post('/api/ai-chat-submit', upload.single('prescription'), ai_rate_limit, handleAiRequest);

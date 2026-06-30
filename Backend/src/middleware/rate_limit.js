@@ -47,7 +47,7 @@ export async function ban_check(req, res, next) {
 }
 
 export const Search_rate_limit = rateLimit({
-    windowMs: 5 * 60 * 1000,
+    windowMs: 1 * 60 * 1000,
     limit: 4,
     standardHeaders: true,
     legacyHeaders: false,
@@ -69,7 +69,7 @@ export const Search_rate_limit = rateLimit({
 
 export const OAuth_rate_limiter = rateLimit({
     windowMs: 5 * 60 * 1000,
-    limit: 100,
+    limit: 25,
     standardHeaders: true,
     legacyHeaders: false,
     store: redisStore('rl-oauth:'),

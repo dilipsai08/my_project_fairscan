@@ -155,8 +155,7 @@ function Home() {
 
         const ipFallback = async () => {
             try {
-                const rawUrl = import.meta.env.VITE_LOCATION_URL;
-                const locationUrl = rawUrl ? rawUrl.replace(/"/g, "") : "https://ipapi.co/json/";
+                const locationUrl = import.meta.env.VITE_LOCATION_URL;
                 const res = await fetch(locationUrl);
                 const data = await res.json();
                 if (data.city && data.region) {
@@ -168,11 +167,12 @@ function Home() {
 
         const onPosition = (pos) => {
             const { latitude, longitude } = pos.coords;
-            const onposKey = (import.meta.env.VITE_ONPOS_API_KEY || "").replace(/"/g, "");
-            const onposUrl = (import.meta.env.VITE_ONPOS_URL || "").replace(/"/g, "");
-            fetch(`${onposUrl}?latitude=${latitude}&longitude=${longitude}&localityLanguage=en&key=${onposKey}`)
-                .then(r => r.json())
-                .then(data => {
+            axios.get(`${backendUrl}/api/get-location`, {
+                params: { latitude, longitude },
+                withCredentials: true
+            })
+                .then(r => {
+                    const data = r.data;
                     const city = data.city || data.locality;
                     const state = data.principalSubdivision || "";
                     const postalCode = data.postcode || "";
@@ -197,7 +197,7 @@ function Home() {
     useEffect(() => {
         const timer = setInterval(() => {
             setActiveTip((prev) => (prev + 1) % healthTips.length);
-        }, 6000);
+        }, 7000);
         return () => clearInterval(timer);
     }, [healthTips.length]);
 
