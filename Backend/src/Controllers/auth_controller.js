@@ -131,34 +131,14 @@ export function oauthCallback(req, res, next) {
             JWT_SECRET,
             { expiresIn: "30d" }
         );
-        return res.redirect(`${frontendURL}/oauth-callback?token=${jwtToken}`);
-    })(req, res, next);
-}
-
-//called by frontend after OAuth redirect to set the httpOnly cookie
-export function setTokenFromOAuth(req, res, next) {
-    try {
-        const { token } = req.body;
-        if (!token) {
-            const error = new Error("Token is required");
-            error.statusCode = 400;
-            return next(error);
-        }
-        jwt.verify(token, JWT_SECRET);
-
-        res.cookie("token", token, {
+        res.cookie("token", jwtToken, {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? "none" : "lax",
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         });
-
-        return res.status(200).json({ success: true, message: "Token set successfully" });
-    } catch (err) {
-        err.statusCode = 401;
-        err.message = "Invalid token";
-        return next(err);
-    }
+        return res.redirect(`${frontendURL}/home`);
+    })(req, res, next);
 }
 
 //password login

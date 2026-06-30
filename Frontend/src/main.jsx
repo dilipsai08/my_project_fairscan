@@ -21,14 +21,13 @@ import After_Sign_up from './pages/After_Sign_up.jsx'
 import Pub_Home from './pages/Pub_Home.jsx'
 import PrivacyPolicy from './pages/Privacy Policy.jsx'
 import TermsAndConditions from './pages/Terms & Conditions.jsx'
-import OAuthCallback from './pages/OAuthCallback.jsx'
 import { ProtectedRoute } from './components/ProtectedRoute.jsx'
 
 axios.defaults.withCredentials = true;
 
 function AppHeader() {
   const location = useLocation();
-  const publicPaths = ['/', '/sign-in', '/sign-up', '/about', '/contact-us', '/privacy-policy', '/terms-conditions', '/oauth-callback'];
+  const publicPaths = ['/', '/sign-in', '/sign-up', '/about', '/contact-us', '/privacy-policy', '/terms-conditions'];
   if (publicPaths.includes(location.pathname)) {
     return <PublicHeader />;
   }
@@ -54,7 +53,6 @@ createRoot(document.getElementById('root')).render(
         <Route path="/sign-in" element={<Sign_In />} />
         <Route path="/sign-up" element={<Sign_up />} />
         <Route path="/after-sign-up" element={<After_Sign_up />} />
-        <Route path="/oauth-callback" element={<OAuthCallback />} />
       </Routes>
       <Footer />
     </BrowserRouter>

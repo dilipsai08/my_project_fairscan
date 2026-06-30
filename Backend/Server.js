@@ -52,7 +52,6 @@ app.use(passport.session());
 app.get('/auth/:provider', OAuth_rate_limiter, authController.oauthRedirect);
 app.get('/auth/:provider/callback', OAuth_rate_limiter, authController.oauthCallback);
 app.post('/api/auth/complete-profile', authController.completeProfile);
-app.post('/api/auth/set-token', authController.setTokenFromOAuth);
 
 // for protected routes
 app.get('/api/auth/verify-session', isAuthenticated, (req, res) => {
