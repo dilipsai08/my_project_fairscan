@@ -90,7 +90,7 @@ app.get('/api/medicine/info', isAuthenticated, Search_rate_limit, medi_info_hand
 app.get('/api/get-location', isAuthenticated, GetLocation);
 
 // AI query
-app.post('/api/ai-chat-submit', upload.single('prescription'), ai_rate_limit, handleAiRequest);
+app.post('/api/ai-chat-submit', isAuthenticated, upload.single('prescription'), ai_rate_limit, handleAiRequest);
 
 // SSE 
 app.get('/api/queue/status', queue_helper);
