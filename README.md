@@ -20,7 +20,7 @@ FairScan addresses both: pricing opacity and prescription illegibility.
 Users submit a test name, the price they were charged, and their hospital tier (Standard or Premium). The system records the entry and returns the current median price for that test, at that location, for that tier. A cumulative savings tracker shows how much each user has saved over time by knowing the market rate before they go.
 
 ### 2. AI Prescription Reader
-Users upload a prescription image with a text query. A vision-language model reads the image, extracts medicine names, converts the shorthand into plain language, explains the common uses of each drug and answer to the the user queries. [The system explicitly does not diagnose conditions, recommend dosages, or suggest changes to treatment.]
+Users upload a prescription image with a text query. A vision-language model reads the image, extracts medicine names, converts the shorthand into plain language, explains the common uses of each drug and answers the user queries. [The system explicitly does not diagnose conditions, recommend dosages, or suggest changes to treatment.]
 
 ### 3. Medicine Information Lookup
 Users search for a medicine by name. The system first checks a local database. If nothing matches, it queries the OpenFDA Drug Label API and returns the name, manufacturer, general use, and known side effects.
@@ -81,10 +81,10 @@ The trust score update runs between steps 2 and 3, after the daily median is ava
 |---|---|
 | Frontend | React 19, React Router 7, Vite, Tailwind CSS 4, Axios |
 | Backend | Node.js, Express 5, ES Modules |
-| Database | PostgreSQL (raw SQL, no ORM) |
+| Database | PostgreSQL |
 | Cache / Queue | Redis, BullMQ |
 | Auth | Passport.js (Google, GitHub, Amazon OAuth 2.0), JWT, bcrypt |
-| AI | OpenRouter API (vision-language models with fallback chain) |
+| AI | OpenRouter API |
 | External API | OpenFDA Drug Label API |
 | Real-time | Server-Sent Events (SSE) for queue position updates |
 | Security | express-rate-limit, Redis-backed IP banning, CORS, HTTP-only cookies |
@@ -185,6 +185,6 @@ project_2/
 
 ## Conclusion
 
-This is a working prototype deployed on AWS EC2. The price data improves as more users contribute — accuracy in underrepresented areas will naturally be low until there are enough submissions. The trust score system is designed to self-correct for that over time.
+FairScan is deployed on AWS EC2. The price data improves as more users contribute — accuracy in underrepresented areas will naturally be low until there are enough submissions. The trust score system is designed to self-correct for that over time.
 
-If you are reading this from my resume, the live demo link is on the project title. Feel free to create an account and try the prescription reader.Thank You!!!
+If you are reading this from my resume, the live demo link is on the project title. Feel free to create an account and try the prescription reader. Thank You!!!
