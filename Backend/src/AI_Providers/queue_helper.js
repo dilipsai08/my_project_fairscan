@@ -14,6 +14,7 @@ export async function queue_helper(req, res,next) {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no',
         'Access-Control-Allow-Origin': frontendURL,
         'Access-Control-Allow-Credentials': 'true',
     });

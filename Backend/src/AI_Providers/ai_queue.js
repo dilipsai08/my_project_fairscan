@@ -154,8 +154,8 @@ if (enable_queue) {
         return processAiJobData(job.data);
     }, {
         connection: redis_Connection,
-        removeOnComplete: 100,
-        removeOnFail: 100,
+        removeOnComplete: { count: 100 },
+        removeOnFail: { count: 100 },
         concurrency: 1,
         limiter: {
             max: 2,
@@ -192,7 +192,7 @@ if (enable_queue) {
     });
 
     worker.on("error", (err) => {
-        logger.error("Worker error: ", err.message);
+        logger.error("Worker error: ", err);
     });
 
     logger.info("AI prescription queue initialized(bullmq)");
