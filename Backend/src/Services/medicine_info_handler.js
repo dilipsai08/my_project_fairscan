@@ -25,7 +25,7 @@ export async function medi_info_handler(req, res, next) {
             dbResult = await findMedicineByName(searchTerm);
         } catch (dbErr) {
             const err = new Error("Failed to query medicines table");
-            err.statusCode = 400;
+            err.statusCode = 500;
             return next(err);
         }
 
@@ -59,7 +59,7 @@ export async function medi_info_handler(req, res, next) {
             }
         } catch (apiErr) {
             const err = new Error("Failed to query OpenFDA API");
-            err.statusCode = 400;
+            err.statusCode = 500;
             return next(err);
         }
 

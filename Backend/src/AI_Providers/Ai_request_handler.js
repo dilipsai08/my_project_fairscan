@@ -4,7 +4,7 @@ import * as db_query from "../Models/db_queries.js";
 
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fieldSize: 10 * 1024 * 1024 },
+    limits: { fileSize: 10 * 1024 * 1024 },//10 mb file size limit
     fileFilter: (req, file, cb) => {
         const allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
         if (allowed_types.includes(file.mimetype)) {
@@ -56,7 +56,7 @@ export async function handleAiRequest(req, res, next) {
             clientId   // stored in job_data so queuevents can send SSE
         });
 
-        const position = await get_position(clientId) || 1;
+        const position = await get_position(clientId) || 1; // ai_queue
 
         return res.status(200).json({
             success: true,

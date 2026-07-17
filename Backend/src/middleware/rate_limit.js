@@ -108,3 +108,24 @@ export const ai_rate_limit = rateLimit({
         }
     },
 });
+
+export const login_rate_limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    store: redisStore('rl-login:'),
+    handler: async (req, res, next) => {
+        try {
+            if (process.env.NODE_ENV !== "development") {
+                await redis_client.setEx(`banned:${req.ip}`, 1 * 24 * 60 * 60, "true");
+            }
+            const err = new Error("Too many login attempts, you are banned for 24 hrs");
+            err.statusCode = 429;
+            return next(err);
+        } catch (err) {
+            logger.error("Error in login rate limit handler:", err);
+            return next(err);
+        }
+    },
+});

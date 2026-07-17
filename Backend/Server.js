@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import './dot_env.js'; 
@@ -9,7 +10,7 @@ import passport from './config/Passport_strategies.js';
 import * as authController from './src/Controllers/auth_controller.js';
 import { isAuthenticated } from './src/middleware/auth.js'
 import { Error_handler as errorHandler } from './src/middleware/error_handler.js';
-import { OAuth_rate_limiter, Search_rate_limit, ai_rate_limit, ban_check } from './src/middleware/rate_limit.js';
+import { OAuth_rate_limiter, Search_rate_limit, ai_rate_limit, ban_check, login_rate_limiter } from './src/middleware/rate_limit.js';
 import upload, { handleAiRequest } from './src/AI_Providers/Ai_request_handler.js';
 import './src/AI_Providers/ai_queue.js';
 import { queue_helper } from './src/AI_Providers/queue_helper.js';
@@ -22,7 +23,6 @@ import { getProfile, getActivity } from './src/Services/profile_service.js';
 import { GetLocation } from './src/Services/location_service.js';
 
 const app = express();
-app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
 
@@ -35,6 +35,22 @@ app.use(cors({
     credentials: true,
 }));
 
+// to previent from cross site request forgeries
+app.use((req, res, next) => {
+    const isStateChanging = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
+    if (isStateChanging) {
+        const origin = req.headers.origin || req.headers.referer;
+        if (origin && !origin.startsWith(frontendURL)) {
+           let err=Error("invalid origin or possible CSFR")
+           err.statusCode=403;
+           return next(err);
+        }
+    }
+    next();
+});
+
+app.use(helmet());
+
 // global ban check
 app.use(ban_check);
 
@@ -42,7 +58,10 @@ app.use(session({
     secret: process.env.SESSION_SECRET || "oauth_session_secret",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 10 * 60 * 1000 } // 10 minutes 
+    cookie: { 
+        maxAge: 10 * 60 * 1000, // 10 minutes 
+        secure: process.env.NODE_ENV !== "development"
+    } 
 }));
 
 app.use(passport.initialize());
@@ -60,7 +79,7 @@ app.get('/api/auth/verify-session', isAuthenticated, (req, res) => {
 
 
 // Login submit endpoint
-app.post('/api/login/submit', authController.loginSubmit);
+app.post('/api/login/submit', login_rate_limiter, authController.loginSubmit);
 
 // User info 
 app.get('/api/user/info', isAuthenticated, (req, res) => {
@@ -74,7 +93,7 @@ app.get('/api/user/activity', isAuthenticated, getActivity);
 // get health tips
 app.get('/api/health-tips', health_tips);
 
-// 4. Logout Endpoint
+// logout Endpoint
 app.post('/api/auth/logout', (req, res) => {
     res.clearCookie('token');
     return res.status(200).json({ success: true, message: 'Logged out successfully' });
@@ -90,7 +109,7 @@ app.get('/api/medicine/info', isAuthenticated, Search_rate_limit, medi_info_hand
 app.get('/api/get-location', isAuthenticated, GetLocation);
 
 // AI query
-app.post('/api/ai-chat-submit', isAuthenticated, upload.single('prescription'), ai_rate_limit, handleAiRequest);
+app.post('/api/ai-chat-submit', isAuthenticated, ai_rate_limit, upload.single('prescription'), handleAiRequest);
 
 // SSE 
 app.get('/api/queue/status', queue_helper);

@@ -15,12 +15,12 @@ function Queue() {
 
     const [position, setPosition] = useState(state?.initialPosition || "--");
     const [status, setStatus] = useState("Connecting to queue…");
-    const [step, setStep] = useState(0);       // 0-3 maps to STEPS
+    const [step, setStep] = useState(0);
     const [progress, setProgress] = useState(5);
     const [eta, setEta] = useState("--");
     const [result, setResult] = useState(null);
 
-    // Open SSE stream on mount
+    // SSE stream 
     useEffect(() => {
         if (!state?.requestId) { navigate("/search"); return; }
 

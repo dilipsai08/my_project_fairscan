@@ -34,7 +34,7 @@ export async function search_handler (req,res,next){
             return next(err);
         }
 
-        if (price <= 0) {
+        if (isNaN(price) || price <= 0) {
             const err = new Error("A valid price is required.");
             err.statusCode = 400;
             return next(err);
@@ -66,7 +66,7 @@ export async function search_handler (req,res,next){
                 savings = curr_price - price;
             }
             
-            const user_savings_num = parseFloat(final_savings_str.replace(/[^0-9.-]/g, "")) || 0;
+            const user_savings_num = parseFloat(String(final_savings_str).replace(/[^0-9.-]/g, "")) || 0;
             final_savings_str = `₹${user_savings_num + savings}`;
         }
 
@@ -92,7 +92,7 @@ export async function search_handler (req,res,next){
                 success: true,
                 message: "Data updated successfully",
                 data: {
-                    city: ans.regionname||ans.divisionname || "Your Area",
+                    city: req.body.city || "Your Area",
                     localPriceRange: `₹${parseFloat(ans.price).toLocaleString('en-IN')}`
                 }
             });
