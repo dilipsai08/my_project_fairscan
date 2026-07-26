@@ -23,6 +23,7 @@ import { getProfile, getActivity } from './src/Services/profile_service.js';
 import { GetLocation } from './src/Services/location_service.js';
 
 const app = express();
+app.set('trust proxy',1);
 const port = process.env.PORT || 3000;
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
 
@@ -77,8 +78,7 @@ app.get('/api/auth/verify-session', isAuthenticated, (req, res) => {
     return res.status(200).json({ loggedIn: true, user: req.user });
 });
 
-
-// Login submit endpoint
+// Login submit 
 app.post('/api/login/submit', login_rate_limiter, authController.loginSubmit);
 
 // User info 
@@ -93,10 +93,19 @@ app.get('/api/user/activity', isAuthenticated, getActivity);
 // get health tips
 app.get('/api/health-tips', health_tips);
 
-// logout Endpoint
-app.post('/api/auth/logout', (req, res) => {
-    res.clearCookie('token');
-    return res.status(200).json({ success: true, message: 'Logged out successfully' });
+// logout 
+app.post('/api/auth/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) return next(err);
+        req.session.destroy((err) => {
+            if (err) {
+                return res.status(500).json({ error: "Something went wrong while logging out ;(" });
+            }
+            res.clearCookie('token');
+            res.clearCookie('connect.sid');
+            return res.status(200).json({ success: true, message: 'Logged out successfully' });
+        });
+    });
 });
 
 // search test
@@ -112,7 +121,7 @@ app.get('/api/get-location', isAuthenticated, GetLocation);
 app.post('/api/ai-chat-submit', isAuthenticated, ai_rate_limit, upload.single('prescription'), handleAiRequest);
 
 // SSE 
-app.get('/api/queue/status', queue_helper);
+app.get('/api/queue/status', isAuthenticated,queue_helper);
 
 // global error handler
 app.use(errorHandler);

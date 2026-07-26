@@ -3,8 +3,10 @@ import axios from 'axios';
 export async function GetLocation(req, res, next) {
     try {
         const { latitude, longitude } = req.query;
-        if (!latitude || !longitude) {
-            return res.status(400).json({ error: "Latitude and longitude are required" });
+        let lat = parseFloat(latitude);
+        let lng = parseFloat(longitude);
+        if (!lat || !lng ||isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+            return res.status(400).json({ error: "Something went wrong while fetching location ;(" });
         }
 
         const onposKey = (process.env.ONPOS_API_KEY || "");
