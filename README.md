@@ -87,7 +87,7 @@ The trust score update runs between steps 2 and 3, after the daily median is ava
 | AI | OpenRouter API |
 | External API | OpenFDA Drug Label API |
 | Real-time | Server-Sent Events (SSE) for queue position updates |
-| Security | express-rate-limit, Redis-backed IP banning, CORS, HTTP-only cookies |
+| Security | Helmet, CSRF origin validation, express-rate-limit, Redis-backed IP banning, CORS, HTTP-only cookies |
 | Logging | Winston with daily rotating log files |
 | Infrastructure | AWS EC2, Nginx, PM2, Let's Encrypt |
 
@@ -95,11 +95,12 @@ The trust score update runs between steps 2 and 3, after the daily median is ava
 
 ## Security and Rate Limiting
 
-The abuse prevention system has three layers:
-
-- **Per-endpoint rate limiters** — search is capped at 4 req per min, AI at 5 req per 15 min, OAuth at 25 req per 5 min. Limits are stored in Redis so they survive server restarts
-- **Automatic IP banning** — exceeding any rate limit triggers a Redis-stored ban ranging from 24 to 72 hours depending on the endpoint. A global middleware checks every incoming request against the ban list before it reaches any route handler
-- **AI queue concurrency control** — BullMQ processes one AI job at a time, with a hard limit of 2 jobs per min.
+- **Helmet** — adds secure HTTP headers (CSP, HSTS, X-Content-Type-Options, etc.) to every response
+- **CSRF protection** — a middleware checks the `Origin` / `Referer` header on every state-changing request (POST, PUT, PATCH, DELETE) and rejects it with 403 if it does not match the frontend URL
+- **Authenticated routes** — AI chat, queue status, and all data endpoints require a valid JWT, so unauthenticated users cannot access them
+- **Per-endpoint rate limiting** — search: 4 req/min, AI: 5 req/15 min, OAuth: 25 req/5 min, login: 30 req/15 min. All limits are stored in Redis
+- **Automatic IP banning** — exceeding any rate limit triggers a Redis-stored ban (24–72 hours). A global middleware checks every request against the ban list
+- **AI queue concurrency** — BullMQ processes one AI job at a time, capped at 2 jobs/min
 
 ---
 
@@ -149,7 +150,7 @@ Nine tables total. The relevant ones for the core logic:
 | GET | `/api/medicine/info?q=` | Yes | Medicine lookup |
 | GET | `/api/get-location` | Yes | Location from pincode |
 | POST | `/api/ai-chat-submit` | Yes | Submit prescription image |
-| GET | `/api/queue/status` | No | SSE stream for queue position |
+| GET | `/api/queue/status` | Yes | SSE stream for queue position |
 | GET | `/api/health-tips` | No | Dashboard health tips |
 
 ---
